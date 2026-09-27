@@ -1,19 +1,59 @@
 #include <stdio.h>
 // 1.1
+
+/**
+ * @brief Tính và trả về số nguyên là số đối của số một số nguyên nhập vào
+ * @param x số nguyên cần tìm số đối
+ * @return int số nguyên -x là số đối của x
+ * @note Giải thích logic: Hàm sử dụng kỹ thuật bù 2 (Two's Complement) để
+ * đảo dấu số nguyên theo từng bit của nó.
+ * Cụ thể: ~x+1 thực hiện đảo bit, sau đó cộng 1 để chuyển thành số đối (bù 2)
+ */
 int negative(int x) {
+  /*
+  Hàm này trả về số đối của số nguyên x
+
+  Args:
+    x (int): số nguyên x đầu vào
+
+  Return:
+    int: số -x là số đối của x
+  */
   x = ~x + 1;
   return x;
 }
 
 // 1.2
+/**
+ * @brief Tính và trả về số nguyên là tích của 100 với số nguyên nhập vào
+ * @param x số nguyên cần tính
+ * @return int số nguyên kết quả 100 * x
+ * @note Giải thích logic: Hàm sử dụng left shift thay cho phép nhân. Vì phép
+ * left shift là nhân với lũy thừa của 2, nên ta tách số 100 thành tổng các lũy
+ * thừa của 2. Thực hiện left shift x với các số mũ lũy thừa đó rồi cộng các
+ * kết quả lại
+ * Cụ thể: 100 = 64 + 32 + 4 = 2^6 + 2^5 + 2^2
+ */
 int cal100x(int x) {
   x = (x << 6) + (x << 5) + (x << 2);
   return x;
 }
 
 // 1.3
+/**
+ * @brief Tính và trả về số nguyên là kết quả sau khi lật byte thứ n trong
+ *  biểu diễn nhị phân của số nguyên x nhập vào
+ * @param x số nguyên cần được lật byte
+ * @param n số nguyên n (0 <= n <=3) chỉ định byte thứ n của x bị lật
+ * @return int số nguyên là kết quả lật 1 byte thứ n của số nguyên x
+ * @note Ý tưởng: tạo ra một mask (4byte) có dạng 0x0000FF00 với FF là
+ * vị trí byte thứ n theo thứ tự tăng từ phải sang trái để thực hiện xor với x
+ * trên cơ sở: x ^ 0 = x, x ^ 1 = ~x
+ * Cụ thể: để FF bắt đầu ở vị trí byte thứ n nghĩa là ta đã left shift 8 * n bit
+ * hay thực hiện left shift n << 3. Và ta có biểu thức mask = 0xff << (n << 3)
+ */
 int flipByte(int x, int n) {
-  x = x ^ (0xff << (n << 3));
+  x = (0xff << (n << 3)) ^ x;
   return x;
 }
 
@@ -63,17 +103,34 @@ int round2n(int x, int n){
 }
 
 // 2.1
+/**
+ * @brief Kiểm tra 2 số x, y có cùng dấu (cùng âm hay cùng không âm). Trả về 1 nếu cùng dấu và 0 nếu ngược lại
+ * @param x số nguyên thứ nhất
+ * @param y số nguyên thứ hai
+ * @return int Trả về 1 nếu x, y cùng dấu, trả về 0 nếu ngược lại
+ * @note Ý tưởng: kiểm tra bit MSB của mỗi số để check dấu. Thực hiện điều đó bằng cách
+ * (x >> 31) & 1 và (y >> 31) & 1 để đảm bảo có dạng 000...001 nếu âm hoặc 000...000 nếu không âm
+ * Sau đó đem các bit MSB này xor với nhau và xor với 1. Việc xor với 1 là để đảm bảo kết quả trả về 1 khi cùng dấu,
+ * trả về 0 nếu ngược lại (nếu không có xor 1 thì trả về bị đảo ngược với yêu cầu)
+ * 
+ */
 int isSameSign(int x, int y) {
-  int signX = x >> 31;
-  int signY = y >> 31;
-  x = !(signX ^ signY);
-  return x;
+  return (((x >> 31) & 1) ^ ((y >> 31) & 1)) ^ 1;
 }
 
 // 2.2
+/**
+ * @brief Hàm kiểm tra số dương, trả về 1 nếu x nhập vào là số dương, 0 nếu x không dương
+ * @param x số nguyên x nhập vào
+ * @return int 1 nếu x là số dương, 0 nếu ngược lại
+ * @note Ý tưởng: kiểm tra bit MSB của mỗi số, thực hiện bằng MSB(x) = (x >> 31) & 1
+ * Vì số dương thì MSB = 0, số 0 thì MSB = 0, số âm thì MSB = 1 kết quả “hơi ngược” với mong muốn
+ * là số dương trả về 1, số 0 thì trả về 0, số âm thì trả về 0.
+ * Do đó ta lấy bù 2 của x, khi đó MSBbu2(x) = MSB(~x+1); MSBbu2(số dương) = 1, MSBbu2(số 0 và số âm) = 0.
+ * Lợi dụng việc số 0 luôn bất biến qua phép lấy bù 2
+ */
 int isPositive(int x) {
-  x = !(x >> 31) & !!x;
-  return x;
+  return ((~x+1) >> 31) & 1;
 }
 
 // 2.3

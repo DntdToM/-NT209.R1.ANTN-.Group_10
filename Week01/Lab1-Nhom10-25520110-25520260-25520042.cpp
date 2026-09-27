@@ -17,16 +17,48 @@ int flipByte(int x, int n) {
   return x;
 }
 
-// 1.4
+//1.4
 unsigned int getnbit(unsigned int x, int n) {
-  x = x & ((1 << n) + (~1 + 1));
+  /*
+   * Ý TƯỞNG: Lấy n bit cuối của x bằng cách tạo mặt nạ (mask) gồm n bit 1 ở cuối rồi AND với x.
+   *
+   * - Cơ bản: Dịch 1 sang trái n bit (ví dụ n=3 ra 1000), sau đó trừ 1 (cộng với ~1+1) để ra n bit 1 (111).
+   * - Nâng cao (Xử lý khi n >= 32 gây overflow):
+   *   + Tính overflow_padd = ~(n >> 5) + 1 (tương đương n/32 rồi lấy số âm).
+   *   + Nếu n < 32: overflow_padd là 0 (toàn bit 0).
+   *   + Nếu n >= 32: overflow_padd là -1 (toàn bit 1).
+   *   + Phép OR với overflow_padd giúp đảm bảo: khi n >= 32, mask tự động trở thành full 1 để lấy trọn vẹn số x.
+   */
+  int overflow_padd = 0 + ~(n >> 5) + 1;
+  int one_big_num = (1 << n) ;
+
+  int full_one = one_big_num + (~1+1) ;
+  full_one = full_one | overflow_padd;
+
+  x = x & full_one;
   return x;
 }
 
-// 1.5
-int round2n(int x, int n) {
-  int mask = (1 << n) + ~0;
-  x = x & ~mask;
+//1.5
+
+int round2n(int x, int n){
+  /*
+   * Ý TƯỞNG: Làm tròn x tới bội số gần nhất của 2^n.
+   *
+   * - Cơ bản: Chặt bỏ n bit cuối bằng cách dịch phải rồi dịch trái (tương đương chia lấy nguyên cho 2^n rồi nhân lại) giúp làm tròn XUỐNG bội số của 2^n.
+   * - Mở rộng (Làm tròn GẦN NHẤT): Ta cộng thêm vào x một khoảng bằng đúng một nửa của 2^n trước khi "chặt bit".
+   *   + boi_n = 1 << n (chính là 2^n).
+   *   + pad_them = boi_n >> 1 (chính là một nửa của 2^n).
+   *   + Nếu phần dư của x lớn hơn hoặc bằng một nửa, việc cộng này sẽ đẩy phần nguyên nhảy lên mức tiếp theo, tạo thành cơ chế làm tròn chính xác.
+   */
+  int boi_n = 1 << n;
+  int pad_them = boi_n >>  1  ;
+
+  x = x + pad_them;
+
+  int chia_nguyen = x >> n ;
+  x = chia_nguyen << n ;
+
   return x;
 }
 

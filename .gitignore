@@ -1,0 +1,15 @@
+# Compiled binaries
+*.exe
+*.o
+*.obj
+*.out
+
+# Visual Studio / VS Code
+.vscode/
+.vs/
+*.user
+*.suo
+
+# Operating System Files
+Thumbs.db
+[Dd]esktop.ini

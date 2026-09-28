@@ -1,6 +1,5 @@
 #include <stdio.h>
 // 1.1
-
 /**
  * @brief Tính và trả về số nguyên là số đối của số một số nguyên nhập vào
  * @param x số nguyên cần tìm số đối
@@ -10,15 +9,6 @@
  * Cụ thể: ~x+1 thực hiện đảo bit, sau đó cộng 1 để chuyển thành số đối (bù 2)
  */
 int negative(int x) {
-  /*
-  Hàm này trả về số đối của số nguyên x
-
-  Args:
-    x (int): số nguyên x đầu vào
-
-  Return:
-    int: số -x là số đối của x
-  */
   x = ~x + 1;
   return x;
 }
@@ -122,15 +112,20 @@ int isSameSign(int x, int y) {
 /**
  * @brief Hàm kiểm tra số dương, trả về 1 nếu x nhập vào là số dương, 0 nếu x không dương
  * @param x số nguyên x nhập vào
- * @return int 1 nếu x là số dương, 0 nếu ngược lại
- * @note Ý tưởng: kiểm tra bit MSB của mỗi số, thực hiện bằng MSB(x) = (x >> 31) & 1
- * Vì số dương thì MSB = 0, số 0 thì MSB = 0, số âm thì MSB = 1 kết quả “hơi ngược” với mong muốn
- * là số dương trả về 1, số 0 thì trả về 0, số âm thì trả về 0.
- * Do đó ta lấy bù 2 của x, khi đó MSBbu2(x) = MSB(~x+1); MSBbu2(số dương) = 1, MSBbu2(số 0 và số âm) = 0.
- * Lợi dụng việc số 0 luôn bất biến qua phép lấy bù 2
+ * @return int trả về 1 nếu x là số dương, 0 nếu ngược lại
+ * @note Ý tưởng: kiểm tra dấu của số x, thực hiện bằng MSB(x) = !(x >> 31)
+ * !(x >> 31) trả về 0 nếu x < 0, trả về 1 nếu x >= 0
+ * Như vậy
+ *      x > 0 khi !(x >> 31) = 1 và x != 0
+ *      x < 0 khi !(x >> 31) = 0 và x != 0
+ *      x = 0 khi !(x >> 31) = 0 và x == 0
+ * Từ đó mà ta cần thêm một toán tử nữa với x để thực hiện phép & với !(x >> 31)
+ * Toán tử đó là !!x trả về 1 nếu x khác 0, trả về 0 nếu x = 0
+ * Cuối cùng AND các kết quả lại ta được biểu thức logic
+ * !(x >> 31) & !!x
  */
 int isPositive(int x) {
-  return ((~x+1) >> 31) & 1;
+  return !(x >> 31) & !!x;
 }
 
 // 2.3
